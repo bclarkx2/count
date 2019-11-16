@@ -1,0 +1,8 @@
+# Maven build artifca
+/target/
+/log/
+
+# IntelliJ
+/.idea/
+*.iml
+*.iws
