@@ -17,8 +17,11 @@ import java.util.Set;
 class CountIT {
 
     private static Map<String, CountResult> tests = Map.ofEntries(
-        Map.entry("/blank", new CountResult(0, 0, 1)),
-        Map.entry("/oneword", new CountResult(1, 1, 1))
+            Map.entry("/blank", new CountResult(0, 0, 0)),
+            Map.entry("/oneword", new CountResult(1, 1, 1)),
+            Map.entry("/twenty-thousand-leagues", new CountResult(92, 7, 3)),
+            Map.entry("/singlespace", new CountResult(0,0,0)),
+            Map.entry("/normalsentence", new CountResult(10, 1, 1))
     );
 
     private static Set<Map.Entry<String, CountResult>> testCases() {
