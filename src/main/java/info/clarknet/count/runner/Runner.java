@@ -1,6 +1,7 @@
 package info.clarknet.count.runner;
 
 import info.clarknet.count.counter.Counter;
+import info.clarknet.count.counter.DummyCounter;
 import info.clarknet.count.counter.OpenNLPCounter;
 import info.clarknet.count.input.FileSample;
 import info.clarknet.count.input.Sample;
@@ -16,6 +17,8 @@ import java.io.PrintWriter;
 public class Runner {
 
     private static final String FILE_OPTION = "file";
+    private static final String ANALYSIS_OPTION = "counter";
+    private static final AnalysisType DEFAULT_ANALYSIS_TYPE = AnalysisType.OpenNLP;
 
     private OutputStream outStream;
     private OutputStream errStream;
@@ -39,9 +42,11 @@ public class Runner {
              PrintWriter outWriter = new PrintWriter(this.getOutStream())) {
 
             String sourceFile;
+            AnalysisType analysisType;
             try {
                 CommandLine cmd = parseArgs(args);
                 sourceFile = cmd.getOptionValue(FILE_OPTION);
+                analysisType = parseAnalysisType(cmd);
             } catch (ParseException e) {
                 errorWriter.println(e.getMessage());
                 return;
@@ -55,7 +60,14 @@ public class Runner {
                 return;
             }
 
-            Counter counter = new OpenNLPCounter();
+            Counter counter;
+            switch (analysisType) {
+                case Dummy:
+                    counter = new DummyCounter();
+                    break;
+                default:
+                    counter = new OpenNLPCounter();
+            }
             CountResult result = counter.count(sample);
 
             try {
@@ -74,15 +86,48 @@ public class Runner {
         options.addOption(Option.builder(FILE_OPTION)
                 .required(true)
                 .hasArg()
+                .desc("Input file to perform counting analysis on.")
+                .build());
+
+        options.addOption(Option.builder(ANALYSIS_OPTION)
+                .hasArg()
+                .optionalArg(true)
+                .type(AnalysisType.class)
+                .desc("Type of count analysis to perform on the sample.")
                 .build());
 
         CommandLineParser parser = new DefaultParser();
         return parser.parse(options, args);
     }
 
+    private AnalysisType parseAnalysisType(CommandLine cmd) throws ParseException{
+
+        AnalysisType analysisType;
+
+        if (cmd.hasOption(ANALYSIS_OPTION)) {
+            String analysisOption = cmd.getOptionValue(ANALYSIS_OPTION);
+            try {
+                analysisType = AnalysisType.valueOf(analysisOption);
+            }
+            catch (IllegalArgumentException e) {
+                String msg = String.format("\"%s\" is not a valid analysis type. See Runner.AnalysisTypes.", analysisOption);
+                throw new ParseException(msg);
+            }
+        }
+        else{
+            analysisType = DEFAULT_ANALYSIS_TYPE;
+        }
+        return analysisType;
+    }
 
     public static void main(String[] args){
         Runner runner = new Runner(System.out, System.err);
         runner.run(args);
+    }
+
+    public enum AnalysisType
+    {
+        Dummy,
+        OpenNLP
     }
 }
