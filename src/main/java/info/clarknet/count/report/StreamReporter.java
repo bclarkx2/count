@@ -1,13 +1,9 @@
 package info.clarknet.count.report;
 
-import info.clarknet.count.counter.Counter;
 import info.clarknet.count.result.CountResult;
 
-import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.stream.Stream;
 
 public class StreamReporter implements CountReporter {
     private OutputStream stream;
@@ -17,6 +13,7 @@ public class StreamReporter implements CountReporter {
         this.stream = stream;
     }
 
+    @Override
     public void report(CountResult result)
     {
         try (PrintWriter writer = new PrintWriter(stream))

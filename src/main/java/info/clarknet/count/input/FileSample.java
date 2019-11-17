@@ -4,31 +4,36 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileSample implements Sample {
 
-    private Stream<String> stream;
+    //private Stream<String> stream;
+    private List<String> lines;
 
     public static FileSample Of(String uri) throws IOException {
         Path path = Paths.get(uri);
         try (BufferedReader reader = Files.newBufferedReader(path))
         {
-            Stream<String> lines = reader.lines();
+            Stream<String> stream = reader.lines();
+            List<String> lines = stream.collect(Collectors.toList());
             return new FileSample(lines);
         }
     }
 
-    private FileSample(Stream<String> stream) {
-        this.stream = stream;
+    private FileSample(List<String> lines) {
+        this.lines = lines;
     }
 
+    @Override
     public Stream<String> lines() {
-        return stream;
+        return lines.stream();
     }
 
+    @Override
     public String text() {
-        return stream.collect(Collectors.joining(System.lineSeparator()));
+        return String.join(System.lineSeparator(), lines);
     }
 }

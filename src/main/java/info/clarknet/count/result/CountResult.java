@@ -2,28 +2,28 @@ package info.clarknet.count.result;
 
 public class CountResult {
 
-    private int words;
-    private int sentences;
-    private int paragraphs;
+    private long words;
+    private long sentences;
+    private long paragraphs;
 
-    public CountResult(int words, int sentences, int paragraphs)
+    public CountResult(long words, long sentences, long paragraphs)
     {
         this.words = words;
         this.sentences = sentences;
         this.paragraphs = paragraphs;
     }
 
-    public int words()
+    public long words()
     {
         return words;
     }
 
-    public int sentences()
+    public long sentences()
     {
         return sentences;
     }
 
-    public int paragraphs()
+    public long paragraphs()
     {
         return paragraphs;
     }
