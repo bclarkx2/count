@@ -13,17 +13,17 @@ public class CountResult {
         this.paragraphs = paragraphs;
     }
 
-    public long words()
+    public long getWords()
     {
         return words;
     }
 
-    public long sentences()
+    public long getSentences()
     {
         return sentences;
     }
 
-    public long paragraphs()
+    public long getParagraphs()
     {
         return paragraphs;
     }

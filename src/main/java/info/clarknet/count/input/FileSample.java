@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 
 public class FileSample implements Sample {
 
-    //private Stream<String> stream;
     private List<String> lines;
 
     public static FileSample Of(String uri) throws IOException {
@@ -27,13 +26,18 @@ public class FileSample implements Sample {
         this.lines = lines;
     }
 
+    private List<String> getLines()
+    {
+        return this.lines;
+    }
+
     @Override
     public Stream<String> lines() {
-        return lines.stream();
+        return getLines().stream();
     }
 
     @Override
     public String text() {
-        return String.join(System.lineSeparator(), lines);
+        return String.join(System.lineSeparator(), getLines());
     }
 }
