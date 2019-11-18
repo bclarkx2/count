@@ -2,6 +2,7 @@ package info.clarknet.count;
 
 import info.clarknet.count.counter.Counter;
 import info.clarknet.count.counter.OpenNLPCounter;
+import info.clarknet.count.counter.RealCounter;
 import info.clarknet.count.input.FileSample;
 import info.clarknet.count.input.Sample;
 import info.clarknet.count.result.CountResult;
@@ -28,6 +29,10 @@ class CountIT {
         return tests.entrySet();
     }
 
+    private boolean useWords = true;
+    private boolean useSentences = false;
+    private boolean useParagraphs = false;
+
 
     @ParameterizedTest
     @MethodSource("testCases")
@@ -36,7 +41,7 @@ class CountIT {
         String uri = testCase.getKey();
         CountResult expected = testCase.getValue();
 
-        Counter counter = new OpenNLPCounter();
+        Counter counter = new RealCounter();
         assertCount(expected, counter, uri);
     }
 
@@ -45,7 +50,8 @@ class CountIT {
         try {
             CountResult actual = runCount(counter, uri);
             String msg = String.format("\nTest: \n%s\nExpected: \n%s\nActual: \n%s\n", uri, expected, actual);
-            Assert.assertEquals(msg, expected, actual);
+
+            Assert.assertTrue(msg, expected.sameAs(actual, useWords, useSentences, useParagraphs));
         }
         catch (IOException e)
         {

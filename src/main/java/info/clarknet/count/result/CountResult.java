@@ -30,6 +30,14 @@ public class CountResult {
         return paragraphs;
     }
 
+    public boolean sameAs(CountResult other, boolean useWords, boolean useSentences, boolean useParagraphs)
+    {
+        if (useWords && (this.getWords() != other.getWords())) { return false; }
+        if (useSentences && (this.getSentences() != other.getSentences())) { return false; }
+        if (useParagraphs && (this.getParagraphs() != other.getParagraphs())) { return false; }
+        return true;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

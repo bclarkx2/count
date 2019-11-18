@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FileSample implements Sample {
+public final class FileSample implements Sample {
 
-    private List<String> lines;
+    private final List<String> lines;
 
     public static FileSample Of(String uri) throws IOException {
         Path path = Paths.get(uri);
