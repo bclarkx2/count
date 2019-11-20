@@ -28,7 +28,11 @@ class CountIT {
             Map.entry("/endwithquote", new CountResult(4, 1, 1)),
             Map.entry("/middlequote", new CountResult(4, 1, 1)),
             Map.entry("/middlequoteexclaim", new CountResult(4, 1, 1)),
-            Map.entry("/multisentencequote", new CountResult(18, 3, 1))
+            Map.entry("/multisentencequote", new CountResult(18, 3, 1)),
+            Map.entry("/manyparagraphs", new CountResult(7, 3, 3)),
+            Map.entry("/trailingleadingnewlines", new CountResult(6, 2, 2)),
+            Map.entry("/multiplenewlines", new CountResult(12, 3, 3)),
+            Map.entry("/whitespacebetweenparagraphs", new CountResult(5, 2, 2))
     );
 
     private static Set<Map.Entry<String, CountResult>> testCases() {
@@ -37,7 +41,7 @@ class CountIT {
 
     private boolean useWords = true;
     private boolean useSentences = true;
-    private boolean useParagraphs = false;
+    private boolean useParagraphs = true;
 
 
     @ParameterizedTest

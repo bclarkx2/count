@@ -1,5 +1,7 @@
 package info.clarknet.count.counter;
 
+import info.clarknet.count.counter.paragraph.LinebreakParagraphDetector;
+import info.clarknet.count.counter.paragraph.ParagraphDetector;
 import info.clarknet.count.counter.sentence.NaiveSentenceDetector;
 import info.clarknet.count.counter.sentence.SentenceDetector;
 import info.clarknet.count.counter.token.Tokenizer;
@@ -16,7 +18,7 @@ public class RealCounter implements Counter{
         return new CountResult(
                 countWords(sample),
                 countSentences(sample),
-                0
+                countParagraphs(sample)
         );
     }
 
@@ -34,5 +36,12 @@ public class RealCounter implements Counter{
         String text = sample.text();
         SentenceDetector detector = new NaiveSentenceDetector();
         return detector.detect(text);
+    }
+
+    private long countParagraphs(Sample sample)
+    {
+        String text = sample.text();
+        ParagraphDetector detector = new LinebreakParagraphDetector();
+        return detector.count(text);
     }
 }
