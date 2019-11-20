@@ -1,5 +1,7 @@
 package info.clarknet.count.counter;
 
+import info.clarknet.count.counter.sentence.NaiveSentenceDetector;
+import info.clarknet.count.counter.sentence.SentenceDetector;
 import info.clarknet.count.counter.token.Tokenizer;
 import info.clarknet.count.counter.token.WhitespaceTokenizer;
 import info.clarknet.count.input.Sample;
@@ -13,7 +15,7 @@ public class RealCounter implements Counter{
     public CountResult count(Sample sample) {
         return new CountResult(
                 countWords(sample),
-                0,
+                countSentences(sample),
                 0
         );
     }
@@ -25,5 +27,12 @@ public class RealCounter implements Counter{
         Stream<String> tokens = tokenizer.tokenize(text);
 
         return tokens.count();
+    }
+
+    private long countSentences(Sample sample)
+    {
+        String text = sample.text();
+        SentenceDetector detector = new NaiveSentenceDetector();
+        return detector.detect(text);
     }
 }

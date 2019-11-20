@@ -1,6 +1,7 @@
 package info.clarknet.count.input;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +21,11 @@ public final class FileSample implements Sample {
             List<String> lines = stream.collect(Collectors.toList());
             return new FileSample(lines);
         }
+    }
+
+    public static FileSample Of(URL url) throws IOException {
+        String path = url.getPath();
+        return Of(path);
     }
 
     private FileSample(List<String> lines) {
