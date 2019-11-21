@@ -9,3 +9,8 @@
 
 # Plan
 /plan/
+
+# Distributions
+*.zip
+*.tar.*
+*.jar

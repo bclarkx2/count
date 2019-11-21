@@ -23,7 +23,7 @@ public final class Runner {
 
     private static final String FILE_OPTION = "file";
     private static final String ANALYSIS_OPTION = "counter";
-    private static final AnalysisType DEFAULT_ANALYSIS_TYPE = AnalysisType.OpenNLP;
+    private static final AnalysisType DEFAULT_ANALYSIS_TYPE = AnalysisType.Basic;
 
 
     /********************
@@ -71,7 +71,6 @@ public final class Runner {
                 analysisType = parseAnalysisType(cmd);
             } catch (ParseException e) {
                 errorWriter.println(e.getMessage());
-                return;
             }
 
             // Attempt to read in source file
