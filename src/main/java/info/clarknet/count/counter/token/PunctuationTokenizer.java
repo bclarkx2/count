@@ -7,24 +7,29 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
 public class PunctuationTokenizer implements Tokenizer {
 
+    /*********************
+     *  Constants
+     *********************/
     private static final String ABBREVIATIONS_FILE = "/abbreviations";
 
-
+    /*********************
+     *  Fields
+     *********************/
     private Set<String> abbreviations;
-
-    PunctuationTokenizer(Set<String> abbreviations)
+    private Set<String> getAbbreviations()
     {
-        this.abbreviations = abbreviations;
+        return abbreviations;
     }
 
+    /*********************
+     *  Ctors/Factories
+     *********************/
     public static PunctuationTokenizer DefaultPunctuationTokenizer()
     {
         InputStream abbreviationStream = PunctuationTokenizer.class.getResourceAsStream(ABBREVIATIONS_FILE);
@@ -38,11 +43,14 @@ public class PunctuationTokenizer implements Tokenizer {
         return new PunctuationTokenizer(abbreviations);
     }
 
-    private Set<String> getAbbreviations()
+    PunctuationTokenizer(Set<String> abbreviations)
     {
-        return abbreviations;
+        this.abbreviations = abbreviations;
     }
 
+    /*********************
+     *  Public API
+     *********************/
     @Override
     public Stream<String> tokenize(String text) {
         Tokenizer whitespaceTokenizer = new WhitespaceTokenizer();
@@ -55,6 +63,9 @@ public class PunctuationTokenizer implements Tokenizer {
         return stream.flatMap(this::expandToken);
     }
 
+    /*********************
+     *  Implementation
+     *********************/
     private Stream<String> expandToken(String token)
     {
         if (token.isEmpty())
@@ -62,28 +73,24 @@ public class PunctuationTokenizer implements Tokenizer {
             return Stream.empty();
         }
 
-        else if (isAbbreviation(token) || Regex.matchesAny(token, Regex.PUNCT, Regex.QUOTE, Regex.HYPHENS))
+        if (isAbbreviation(token) || Regex.matchesAny(token, Regex.PUNCT, Regex.QUOTE, Regex.HYPHENS))
         {
             return Stream.of(token);
         }
 
-        else if (Regex.includesAny(token, Regex.BEGINNING_QUOTE))
+        if (Regex.includesAny(token, Regex.BEGINNING_QUOTE))
         {
             return beginStream(token).flatMap(this::expandToken);
         }
 
-        Optional<Matcher> matcher = Regex.matcherOfAny(token, Regex.ENDING_QUOTE, Regex.ENDING_PUNCT, Regex.ENDING_HYPHENS);
-        if (matcher.isPresent())
+        Optional<Integer> index = Regex.indexOfAny(token, Regex.ENDING_QUOTE, Regex.ENDING_PUNCT, Regex.ENDING_HYPHENS);
+        if (index.isPresent())
         {
-            int matchIndex = matcher.get().start() ;
-            matchIndex = Math.max(matchIndex, 0);
-            Stream<String> split = indexSplit(token, matchIndex);
+            Stream<String> split = indexSplit(token, index.get());
             return split.flatMap(this::expandToken);
         }
 
-        else {
-            return Stream.of(token);
-        }
+        return Stream.of(token);
     }
 
     private boolean isAbbreviation(String token)
@@ -94,10 +101,6 @@ public class PunctuationTokenizer implements Tokenizer {
 
     private Stream<String> beginStream(String token){
         return indexSplit(token, 1);
-    }
-
-    private Stream<String> endStream(String token) {
-        return indexSplit(token, token.length() - 1);
     }
 
     private Stream<String> indexSplit(String token, int index)

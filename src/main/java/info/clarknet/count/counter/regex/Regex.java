@@ -7,10 +7,16 @@ import java.util.stream.Stream;
 
 public final class Regex {
 
+    /*********************
+     *  Private constants
+     *********************/
     private static final String PUNCT_REGEX = "[?!.]";
     private static final String QUOTE_REGEX = "[\"]";
     private static final String HYPHENS_REGEX = "[-]+";
 
+    /*********************
+     *  Public constants
+     *********************/
     public static final Pattern PUNCT;
     public static final Pattern QUOTE;
     public static final Pattern HYPHENS;
@@ -19,18 +25,38 @@ public final class Regex {
     public static final Pattern ENDING_PUNCT;
     public static final Pattern ENDING_HYPHENS;
 
-
+    /* *******************
+     *  Pre-compiled patterns (initialized at class load)
+     *********************/
     static {
         PUNCT = Pattern.compile(PUNCT_REGEX);
         QUOTE = Pattern.compile(QUOTE_REGEX);
         HYPHENS = Pattern.compile(HYPHENS_REGEX);
 
-        BEGINNING_QUOTE = Pattern.compile(String.format("^%s", QUOTE_REGEX));
+        BEGINNING_QUOTE = compileBeginning(QUOTE_REGEX);
 
-        ENDING_QUOTE = Pattern.compile(String.format("%s$", QUOTE_REGEX));
-        ENDING_PUNCT = Pattern.compile(String.format("%s$", PUNCT_REGEX));
-        ENDING_HYPHENS = Pattern.compile(String.format("%s$", HYPHENS_REGEX));
+        ENDING_QUOTE = compileEnding(QUOTE_REGEX);
+        ENDING_PUNCT = compileEnding(PUNCT_REGEX);
+        ENDING_HYPHENS = compileEnding(HYPHENS_REGEX);
     }
+
+    /*********************
+     *  Compilation helpers
+     *********************/
+    private static Pattern compileBeginning(String regex)
+    {
+        return Pattern.compile(String.format("^%s", regex));
+    }
+
+    private static Pattern compileEnding(String regex)
+    {
+        return Pattern.compile(String.format("%s$", regex));
+    }
+
+
+    /*********************
+     *  Public API
+     *********************/
 
     public static boolean includesAny(String token, Pattern... patterns)
     {
@@ -42,12 +68,13 @@ public final class Regex {
         return Stream.of(patterns).anyMatch(p -> p.matcher(token).matches());
     }
 
-    public static Optional<Matcher> matcherOfAny(String token, Pattern... patterns)
+    public static Optional<Integer> indexOfAny(String token, Pattern... patterns)
     {
         return Stream.of(patterns)
                 .map(p -> p.matcher(token))
                 .filter(Matcher::find)
-                .findFirst();
+                .findAny()
+                .map(Matcher::start);
     }
 
     public static boolean isPunctuation(String token)
