@@ -32,7 +32,14 @@ class CountIT {
             Map.entry("/manyparagraphs", new CountResult(7, 3, 3)),
             Map.entry("/trailingleadingnewlines", new CountResult(6, 2, 2)),
             Map.entry("/multiplenewlines", new CountResult(12, 3, 3)),
-            Map.entry("/whitespacebetweenparagraphs", new CountResult(5, 2, 2))
+            Map.entry("/whitespacebetweenparagraphs", new CountResult(5, 2, 2)),
+            Map.entry("/fragment", new CountResult(7, 0, 1)),
+            Map.entry("/midsentencelinebreak", new CountResult(7, 1, 1)),
+            Map.entry("/midwordlinebreak", new CountResult(6, 1, 1)),
+            Map.entry("/paragraphwithoutsentence", new CountResult(15, 2, 3)),
+            Map.entry("/nestedquote", new CountResult(12, 1, 1)),
+            Map.entry("/loremipsum", new CountResult(69, 4, 1)),
+            Map.entry("/novel", new CountResult(166, 12,6))
     );
 
     private static Set<Map.Entry<String, CountResult>> testCases() {

@@ -66,4 +66,28 @@ class PunctuationTokenizerTest {
                 Arrays.asList("She", "said,", "\"", "Don't,", "\"", "whispering", ".")
         );
     }
+
+    @Test
+    void tokenize_ElidedBegining_SingleQuoteNotExtracted() {
+        tester.assertTokenized(
+                "That is 'nough said.",
+                Arrays.asList("That", "is", "'nough", "said", ".")
+        );
+    }
+
+    @Test
+    void tokenize_SingleHyphenEndWord_HyphenTokenized() {
+        tester.assertTokenized(
+                "I said-",
+                Arrays.asList("I", "said", "-")
+        );
+    }
+
+    @Test
+    void tokenize_MultiHyphenEndWord_HyphensTokenizedTogether() {
+        tester.assertTokenized(
+                "I said--",
+                Arrays.asList("I", "said", "--")
+        );
+    }
 }

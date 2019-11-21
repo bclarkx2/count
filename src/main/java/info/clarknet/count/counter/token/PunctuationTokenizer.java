@@ -5,7 +5,9 @@ import info.clarknet.count.counter.regex.Regex;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -60,7 +62,7 @@ public class PunctuationTokenizer implements Tokenizer {
             return Stream.empty();
         }
 
-        else if (isAbbreviation(token) || Regex.matchesAny(token, Regex.PUNCT, Regex.QUOTE))
+        else if (isAbbreviation(token) || Regex.matchesAny(token, Regex.PUNCT, Regex.QUOTE, Regex.HYPHENS))
         {
             return Stream.of(token);
         }
@@ -70,9 +72,13 @@ public class PunctuationTokenizer implements Tokenizer {
             return beginStream(token).flatMap(this::expandToken);
         }
 
-        else if (Regex.includesAny(token, Regex.ENDING_QUOTE, Regex.ENDING_PUNCT))
+        Optional<Matcher> matcher = Regex.matcherOfAny(token, Regex.ENDING_QUOTE, Regex.ENDING_PUNCT, Regex.ENDING_HYPHENS);
+        if (matcher.isPresent())
         {
-            return endStream(token).flatMap(this::expandToken);
+            int matchIndex = matcher.get().start() ;
+            matchIndex = Math.max(matchIndex, 0);
+            Stream<String> split = indexSplit(token, matchIndex);
+            return split.flatMap(this::expandToken);
         }
 
         else {
@@ -101,26 +107,4 @@ public class PunctuationTokenizer implements Tokenizer {
                 token.substring(index)
         );
     }
-
-//
-//    private Stream<String> quoteStream(String token)
-//    {
-//        int startIndex, endIndex;
-//
-//        String first = token.substring(0, 1);
-//        if (isQuote(first))
-//        {
-//            startIndex = 0;
-//        }
-//        else {
-//            startIndex = 1;
-//        }
-//
-//        String last = token.substring(token.length() - 1);
-//        endIndex = isQuote(last) ? token.length() - 1 : token.length();
-//
-//        String middle = token.substring(startIndex, endIndex);
-//
-//        return Stream.of(first, middle, last);
-//    }
 }
