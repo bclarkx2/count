@@ -15,7 +15,7 @@
     <files>
         <file>
             <source> ${project.build.directory}/${project.artifactId}-${project.version}.jar</source>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory>/target</outputDirectory>
         </file>
         <file>
             <source> ${project.basedir}/pom.xml</source>
