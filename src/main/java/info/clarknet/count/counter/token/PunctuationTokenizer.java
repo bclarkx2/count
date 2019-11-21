@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public class PunctuationTokenizer implements Tokenizer {
+public final class PunctuationTokenizer implements Tokenizer {
 
 
     /*********************
@@ -25,7 +25,7 @@ public class PunctuationTokenizer implements Tokenizer {
      *  Fields
      *********************/
 
-    private Set<String> abbreviations;
+    private final Set<String> abbreviations;
     private Set<String> getAbbreviations()
     {
         return abbreviations;
@@ -38,10 +38,10 @@ public class PunctuationTokenizer implements Tokenizer {
 
     public static PunctuationTokenizer instance()
     {
-        InputStream abbreviationStream = PunctuationTokenizer.class.getResourceAsStream(ABBREVIATIONS_FILE);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(abbreviationStream));
+        final InputStream abbreviationStream = PunctuationTokenizer.class.getResourceAsStream(ABBREVIATIONS_FILE);
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(abbreviationStream));
 
-        Set<String> abbreviations = reader
+        final Set<String> abbreviations = reader
                 .lines()
                 .map(String::toLowerCase)
                 .collect(Collectors.toSet());
@@ -61,8 +61,8 @@ public class PunctuationTokenizer implements Tokenizer {
 
     @Override
     public Stream<String> tokenize(String text) {
-        Tokenizer whitespaceTokenizer = new WhitespaceTokenizer();
-        Stream<String> whitespaceTokens = whitespaceTokenizer.tokenize(text);
+        final Tokenizer whitespaceTokenizer = new WhitespaceTokenizer();
+        final Stream<String> whitespaceTokens = whitespaceTokenizer.tokenize(text);
         return transform(whitespaceTokens);
     }
 
@@ -93,7 +93,7 @@ public class PunctuationTokenizer implements Tokenizer {
             return beginStream(token).flatMap(this::expandToken);
         }
 
-        Optional<Integer> index = Regex.indexOfAny(token, Regex.ENDING_QUOTE, Regex.ENDING_PUNCT, Regex.ENDING_HYPHENS);
+        final Optional<Integer> index = Regex.indexOfAny(token, Regex.ENDING_QUOTE, Regex.ENDING_PUNCT, Regex.ENDING_HYPHENS);
         if (index.isPresent())
         {
             Stream<String> split = indexSplit(token, index.get());
@@ -105,7 +105,7 @@ public class PunctuationTokenizer implements Tokenizer {
 
     private boolean isAbbreviation(String token)
     {
-        String lowerCaseToken = token.toLowerCase();
+        final String lowerCaseToken = token.toLowerCase();
         return getAbbreviations().contains(lowerCaseToken);
     }
 

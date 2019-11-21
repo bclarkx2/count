@@ -4,8 +4,8 @@ import info.clarknet.count.result.CountResult;
 
 import java.io.PrintWriter;
 
-public class StreamReporter implements CountReporter {
-    private PrintWriter writer;
+public final class StreamReporter implements CountReporter {
+    private final PrintWriter writer;
 
     public StreamReporter(PrintWriter writer)
     {

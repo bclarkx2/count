@@ -5,7 +5,7 @@ import info.clarknet.count.counter.regex.Regex;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public class WhitespaceTokenizer implements Tokenizer{
+public final class WhitespaceTokenizer implements Tokenizer{
 
     /*********************
      *  Public API
@@ -13,13 +13,13 @@ public class WhitespaceTokenizer implements Tokenizer{
 
     @Override
     public Stream<String> tokenize(String text) {
-        String trimmed = text.trim();
+        final String trimmed = text.trim();
 
         if (trimmed.isBlank()) {
             return Stream.empty();
         }
 
-        String[] lines = trimmed.split(Regex.GREEDY_WHITESPACE_REGEX);
+        final String[] lines = trimmed.split(Regex.GREEDY_WHITESPACE_REGEX);
         return Arrays.stream(lines);
     }
 

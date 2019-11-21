@@ -6,13 +6,13 @@ import info.clarknet.count.counter.token.Tokenizer;
 
 import java.util.stream.Stream;
 
-public class NaiveSentenceDetector implements SentenceDetector {
+public final class NaiveSentenceDetector implements SentenceDetector {
 
     @Override
     public long detect(String text) {
 
-        Tokenizer punctuationTokenizer = PunctuationTokenizer.instance();
-        Stream<String> tokenStream = punctuationTokenizer.tokenize(text);
+        final Tokenizer punctuationTokenizer = PunctuationTokenizer.instance();
+        final Stream<String> tokenStream = punctuationTokenizer.tokenize(text);
 
         return tokenStream
                 .filter(Regex::isPunctuation)

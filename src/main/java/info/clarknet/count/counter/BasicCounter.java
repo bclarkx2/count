@@ -11,7 +11,7 @@ import info.clarknet.count.result.CountResult;
 
 import java.util.stream.Stream;
 
-public class BasicCounter implements Counter{
+public final class BasicCounter implements Counter{
 
     /*********************
      *  Public API
@@ -33,24 +33,24 @@ public class BasicCounter implements Counter{
 
     private long countWords(Sample sample)
     {
-        String text = sample.text();
-        Tokenizer tokenizer = new WhitespaceTokenizer();
-        Stream<String> tokens = tokenizer.tokenize(text);
+        final String text = sample.text();
+        final Tokenizer tokenizer = new WhitespaceTokenizer();
+        final Stream<String> tokens = tokenizer.tokenize(text);
 
         return tokens.count();
     }
 
     private long countSentences(Sample sample)
     {
-        String text = sample.text();
-        SentenceDetector detector = new NaiveSentenceDetector();
+        final String text = sample.text();
+        final SentenceDetector detector = new NaiveSentenceDetector();
         return detector.detect(text);
     }
 
     private long countParagraphs(Sample sample)
     {
-        String text = sample.text();
-        ParagraphDetector detector = new LinebreakParagraphDetector();
+        final String text = sample.text();
+        final ParagraphDetector detector = new LinebreakParagraphDetector();
         return detector.count(text);
     }
 }

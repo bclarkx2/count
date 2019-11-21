@@ -1,30 +1,37 @@
 package info.clarknet.count.input;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class FileSample implements Sample {
 
+    /*********************
+     *  Fields
+     *********************/
+
     private final List<String> lines;
 
+    private List<String> getLines() {
+        return lines;
+    }
+
+    /*********************
+     *  ctors / static factories
+     *********************/
+
     public static FileSample Of(String uri) throws IOException {
-        Path path = Paths.get(uri);
-        try (BufferedReader reader = Files.newBufferedReader(path))
-        {
-            Stream<String> stream = reader.lines();
-            List<String> lines = stream.collect(Collectors.toList());
-            return new FileSample(lines);
-        }
+        final Path path = Paths.get(uri);
+        final List<String> lines = Files.readAllLines(path);
+        return new FileSample(lines);
     }
 
     public static FileSample Of(URL url) throws IOException {
-        String path = url.getPath();
+        final String path = url.getPath();
         return Of(path);
     }
 
@@ -32,10 +39,10 @@ public final class FileSample implements Sample {
         this.lines = lines;
     }
 
-    private List<String> getLines()
-    {
-        return this.lines;
-    }
+
+    /*********************
+     *  Public API
+     *********************/
 
     @Override
     public Stream<String> lines() {

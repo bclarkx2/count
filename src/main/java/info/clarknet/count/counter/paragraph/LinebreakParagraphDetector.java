@@ -3,17 +3,17 @@ package info.clarknet.count.counter.paragraph;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinebreakParagraphDetector implements ParagraphDetector {
+public final class LinebreakParagraphDetector implements ParagraphDetector {
 
     @Override
     public List<String> paragraphs(String text) {
-        String trimmed = text.trim();
-        String[] lines = trimmed.split(System.lineSeparator());
+        final String trimmed = text.trim();
+        final String[] lines = trimmed.split(System.lineSeparator());
 
-        List<String> paragraphs = new ArrayList<>();
+        final List<String> paragraphs = new ArrayList<>();
 
         StringBuilder builder = new StringBuilder();
-        for (String str : lines)
+        for (final String str : lines)
         {
             if (str.isBlank())
             {
@@ -38,7 +38,7 @@ public class LinebreakParagraphDetector implements ParagraphDetector {
 
     @Override
     public long count(String text) {
-         List<String> paragraphs = paragraphs(text);
+         final List<String> paragraphs = paragraphs(text);
          return paragraphs.size();
     }
 }

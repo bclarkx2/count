@@ -3,7 +3,7 @@ package info.clarknet.count.counter;
 import info.clarknet.count.input.Sample;
 import info.clarknet.count.result.CountResult;
 
-public class DummyCounter implements Counter {
+public final class DummyCounter implements Counter {
 
     @Override
     public CountResult count(Sample sample)

@@ -20,17 +20,17 @@ public class OpenNLPCounter implements Counter {
         long sentenceCount;
         long paragraphCount;
 
-        String text = sample.text();
+        final String text = sample.text();
 
-        Tokenizer tokenizer = WhitespaceTokenizer.INSTANCE;
-        String[] tokens = tokenizer.tokenize(text);
+        final Tokenizer tokenizer = WhitespaceTokenizer.INSTANCE;
+        final String[] tokens = tokenizer.tokenize(text);
         wordCount = tokens.length;
 
-        try (InputStream modelStream = getClass().getResourceAsStream("/en-sent.bin"))
+        try (final InputStream modelStream = getClass().getResourceAsStream("/en-sent.bin"))
         {
-            SentenceModel sentenceModel = new SentenceModel(modelStream);
-            SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentenceModel);
-            String[] sentences = sentenceDetector.sentDetect(text);
+            final SentenceModel sentenceModel = new SentenceModel(modelStream);
+            final SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentenceModel);
+            final String[] sentences = sentenceDetector.sentDetect(text);
             sentenceCount = sentences.length;
         }
         catch(IOException e)
@@ -38,8 +38,8 @@ public class OpenNLPCounter implements Counter {
             sentenceCount = -1;
         }
 
-        Stream<String> lines = sample.lines();
-        long blankLines = lines
+        final Stream<String> lines = sample.lines();
+        final long blankLines = lines
                 .filter(String::isBlank)
                 .count();
         paragraphCount = blankLines + 1;

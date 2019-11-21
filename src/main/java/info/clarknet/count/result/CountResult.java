@@ -2,11 +2,11 @@ package info.clarknet.count.result;
 
 import java.util.Objects;
 
-public class CountResult {
+public final class CountResult {
 
-    private long words;
-    private long sentences;
-    private long paragraphs;
+    private final long words;
+    private final long sentences;
+    private final long paragraphs;
 
     public CountResult(long words, long sentences, long paragraphs)
     {
@@ -34,8 +34,7 @@ public class CountResult {
     {
         if (useWords && (this.getWords() != other.getWords())) { return false; }
         if (useSentences && (this.getSentences() != other.getSentences())) { return false; }
-        if (useParagraphs && (this.getParagraphs() != other.getParagraphs())) { return false; }
-        return true;
+        return !useParagraphs || (this.getParagraphs() == other.getParagraphs());
     }
 
     @Override

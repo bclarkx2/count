@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * If we are in the middle of a fragment when we encounter such a situation, we build a
  * subfragment.
  */
-public class FragmentSentenceDetector implements SentenceDetector {
+final class FragmentSentenceDetector implements SentenceDetector {
 
     @Override
     public long detect(String text) {
