@@ -71,6 +71,7 @@ public final class Runner {
                 analysisType = parseAnalysisType(cmd);
             } catch (ParseException e) {
                 errorWriter.println(e.getMessage());
+                return;
             }
 
             // Attempt to read in source file
