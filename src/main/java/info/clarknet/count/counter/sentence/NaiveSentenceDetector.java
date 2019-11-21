@@ -11,7 +11,7 @@ public class NaiveSentenceDetector implements SentenceDetector {
     @Override
     public long detect(String text) {
 
-        Tokenizer punctuationTokenizer = PunctuationTokenizer.DefaultPunctuationTokenizer();
+        Tokenizer punctuationTokenizer = PunctuationTokenizer.instance();
         Stream<String> tokenStream = punctuationTokenizer.tokenize(text);
 
         return tokenStream

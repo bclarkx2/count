@@ -1,11 +1,15 @@
 package info.clarknet.count.counter.token;
 
+import info.clarknet.count.counter.regex.Regex;
+
 import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class WhitespaceTokenizer implements Tokenizer{
 
-    private final String GREEDY_WHITESPACE_REGEX = "\\s+";
+    /*********************
+     *  Public API
+     *********************/
 
     @Override
     public Stream<String> tokenize(String text) {
@@ -15,11 +19,13 @@ public class WhitespaceTokenizer implements Tokenizer{
             return Stream.empty();
         }
 
-        return Arrays.stream(trimmed.split(GREEDY_WHITESPACE_REGEX));
+        String[] lines = trimmed.split(Regex.GREEDY_WHITESPACE_REGEX);
+        return Arrays.stream(lines);
     }
 
     @Override
-    public Stream<String> transform(Stream<String> stream) {
-        return null;
+    public Stream<String> transform(Stream<String> tokens) {
+        return tokens
+                .flatMap(this::tokenize);
     }
 }

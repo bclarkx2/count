@@ -13,24 +13,30 @@ import java.util.stream.Stream;
 
 public class PunctuationTokenizer implements Tokenizer {
 
+
     /*********************
      *  Constants
      *********************/
+
     private static final String ABBREVIATIONS_FILE = "/abbreviations";
+
 
     /*********************
      *  Fields
      *********************/
+
     private Set<String> abbreviations;
     private Set<String> getAbbreviations()
     {
         return abbreviations;
     }
 
+
     /*********************
      *  Ctors/Factories
      *********************/
-    public static PunctuationTokenizer DefaultPunctuationTokenizer()
+
+    public static PunctuationTokenizer instance()
     {
         InputStream abbreviationStream = PunctuationTokenizer.class.getResourceAsStream(ABBREVIATIONS_FILE);
         BufferedReader reader = new BufferedReader(new InputStreamReader(abbreviationStream));
@@ -48,9 +54,11 @@ public class PunctuationTokenizer implements Tokenizer {
         this.abbreviations = abbreviations;
     }
 
+
     /*********************
      *  Public API
      *********************/
+
     @Override
     public Stream<String> tokenize(String text) {
         Tokenizer whitespaceTokenizer = new WhitespaceTokenizer();
@@ -63,9 +71,11 @@ public class PunctuationTokenizer implements Tokenizer {
         return stream.flatMap(this::expandToken);
     }
 
+
     /*********************
      *  Implementation
      *********************/
+
     private Stream<String> expandToken(String token)
     {
         if (token.isEmpty())

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LinebreakParagraphDetector implements ParagraphDetector {
+
     @Override
     public List<String> paragraphs(String text) {
         String trimmed = text.trim();
@@ -33,12 +34,11 @@ public class LinebreakParagraphDetector implements ParagraphDetector {
         }
 
         return paragraphs;
-
     }
 
     @Override
     public long count(String text) {
          List<String> paragraphs = paragraphs(text);
-        return paragraphs.size();
+         return paragraphs.size();
     }
 }

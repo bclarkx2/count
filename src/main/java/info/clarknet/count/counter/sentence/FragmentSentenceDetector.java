@@ -22,18 +22,12 @@ public class FragmentSentenceDetector implements SentenceDetector {
     @Override
     public long detect(String text) {
 
-        Tokenizer punctuationTokenizer = PunctuationTokenizer.DefaultPunctuationTokenizer();
+        Tokenizer punctuationTokenizer = PunctuationTokenizer.instance();
         Stream<String> tokenStream = punctuationTokenizer.tokenize(text);
 
         List<String> tokens = tokenStream.collect(Collectors.toList());
 
         List<List<String>> fragments = Collections.emptyList();
-
-//        for (String token : tokens)
-//        {
-//
-//        }
-
 
         return 0;
     }

@@ -1,7 +1,7 @@
 package info.clarknet.count;
 
 import info.clarknet.count.counter.Counter;
-import info.clarknet.count.counter.RealCounter;
+import info.clarknet.count.counter.BasicCounter;
 import info.clarknet.count.input.FileSample;
 import info.clarknet.count.input.Sample;
 import info.clarknet.count.result.CountResult;
@@ -58,7 +58,7 @@ class CountIT {
         String uri = testCase.getKey();
         CountResult expected = testCase.getValue();
 
-        Counter counter = new RealCounter();
+        Counter counter = new BasicCounter();
         assertCount(expected, counter, uri);
     }
 

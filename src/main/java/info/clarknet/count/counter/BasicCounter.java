@@ -11,7 +11,11 @@ import info.clarknet.count.result.CountResult;
 
 import java.util.stream.Stream;
 
-public class RealCounter implements Counter{
+public class BasicCounter implements Counter{
+
+    /*********************
+     *  Public API
+     *********************/
 
     @Override
     public CountResult count(Sample sample) {
@@ -21,6 +25,11 @@ public class RealCounter implements Counter{
                 countParagraphs(sample)
         );
     }
+
+
+    /*********************
+     *  Private implementation
+     *********************/
 
     private long countWords(Sample sample)
     {
