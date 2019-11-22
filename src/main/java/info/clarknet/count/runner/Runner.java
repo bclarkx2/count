@@ -115,6 +115,9 @@ public final class Runner {
 
             // Report on results
             try {
+                outWriter.println(String.format("Counter: %s", analysisType));
+                outWriter.println("======");
+
                 final CountReporter reporter = new StreamReporter(outWriter);
                 reporter.report(result);
             }
