@@ -183,6 +183,25 @@
         </executions>
       </plugin>
       <plugin>
+          <groupId>de.akquinet.jbosscc.latex</groupId>
+          <artifactId>maven-latex-plugin</artifactId>
+          <version>1.2</version>
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <phase>site</phase>
+            <goals>
+              <goal>latex</goal>
+            </goals>
+            <configuration>
+              <settings>
+                <outputDirectory>../..</outputDirectory>
+              </settings>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>

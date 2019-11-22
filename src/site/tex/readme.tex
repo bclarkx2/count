@@ -1,0 +1,146 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{Count}
+\author{Brian Clark}
+
+\maketitle
+
+
+An NLP library and CL app for counting words, sentences, and paragraphs.
+
+\tableofcontents
+\newpage
+
+
+\section{Summary}
+\texttt{count} is a Java library that allows analyzing English text to determine the number of words, sentences, and paragraphs in an input sample.
+
+It also provides a command line utility to run this analysis on a text file (see \nameref{sec:usage}). \texttt{count} uses Maven to organize dependencies, build, testing, and packaging tasks (see \nameref{sec:build}).
+
+\section{Usage}
+\label{sec:usage}
+
+\subsection{CLI}
+
+\texttt{java -jar <count-jar> -file <source-file>} \\
+
+\texttt{<count-jar>}: Enter the path to the \texttt{count} JAR. If building using Maven, this will be located in the \texttt{target/} subdirectory. \\
+
+\texttt{<source-file>}: Enter the path to a plain text file you want to run the \texttt{count} analysis on.
+
+
+\section{Build}
+\label{sec:build}
+\texttt{count} can be run either from a distributed tarball or by building from source.
+
+\subsection{Source}
+
+\begin{enumerate}
+ \item Clone the repository from \url{git@github.com:bclarkx2/count}
+ \item Build the project using \texttt{mvn install}
+ \item Run the project using the JAR file generated at \texttt{target/count-<version>-SNAPSHOT.jar}
+\end{enumerate}
+
+\subsection{Tarball}
+
+\begin{enumerate}
+ \item Untar the \texttt{count-<version>-SNAPSHOT.tar.gz} to a file location (e.g. by running \texttt{tar -xzvf count-<version>-SNAPSHOT.tar.gz}
+ \item Run the project using the JAR file generated at \texttt{count/target/count-<version>-SNAPSHOT.jar}
+\end{enumerate}
+
+
+\section{General Approach}
+I approached this task with two objectives in mind:
+
+\begin{enumerate}
+ \item Define the interfaces of the necessary components, and then iterate on each to improve. Once the boundaries are defined, it will be easier to iteratively attack the well-defined problem and try to come up with better solutions to these tricky sorts of problems.
+ \item Use the principle of composition. Each component should be easily re-used as a part of another component while building the processing pipeline.
+\end{enumerate}
+
+\section{Project Structure}
+
+\subsection{Directory Structure}
+
+\texttt{/src} - all of the source material for the project \\
+\texttt{/src/main/java} - java source code \\
+\texttt{/src/main/resources} - resources used during execution \\
+\texttt{/src/main/assembly} - configuration used to generate a compressed project assembly \\
+\texttt{/src/test} - root for all test code and resources at the unit level \\
+\texttt{/src/it} - root for all test code and resources at the integration level \\
+\texttt{/site/tex} - source material for this and other documentation
+\texttt{/target} - output build directory
+
+\subsection{Code organization}
+Here is a description of the basic codeflow of the command line program.
+\begin{enumerate}
+ \item All the Java class files and dependencies are packaged into the \texttt{count} JAR file, with the \texttt{Runner} class set as the main class (from the \texttt{info.clarknet.count.runner} package.
+ \item When the main method of the \texttt{Runner} class is invoked, the command line flags are parsed to determine which source file and which type of Counter should be used.
+ \item Then a \texttt{Sample} class is constructed based on the source file path provided via command line. This \texttt{Sample} class abstracts away the process of reading in text from an IO source, and could potentially in the future store metadata about the text contained within it.
+ \item The \texttt{Sample} object is fed as an input to an instance of a class implementing the \texttt{Counter} interface (e.g., the counter!). The counter's job is to turn this \texttt{Sample} input into a \texttt{CountResult} object that holds data about the count of words, sentences, and paragraphs within the \texttt{Sample}. The \texttt{Counter} object will make use of any of the classes defined in the \texttt{info.clarknet.counter.count} package to accomplish this goal, mixing and matching them as necessary to get the best result.
+ \item Finally, the \texttt{CountResult} object will be passed to a \texttt{CountReporter} object. This \texttt{CountReporter} will be instantiated with all the information it needs to deliver a full report on the \texttt{CountResult} to the output destination of choice. (For example, the \texttt{StreamReporter} implementation will write a report to the standard output stream.
+\end{enumerate}
+
+
+\section{NLP Heuristics}
+
+\subsection{Available Counters}
+The \texttt{BasicCounter} class is the current best attempt at implementing a counter. I developed all the heuristics used in this class. \texttt{OpenNLPCounter} is provided as a sort of reference implementation using parts of the Apache OpenNLP library.
+
+\subsection{Word detection}
+The \texttt{info.clarknet.counter.count.token} package contains the code designed to identify words in the given text. The \texttt{Tokenizer} interface describes the behavior that any Tokenizer is responsible for, namely, transforming one string or stream of strings into a "tokenized" stream of strings.
+
+In order to count words, I defined a \texttt{WhitespaceTokenizer} class that implements \texttt{Tokenizer}. This class takes advantage of the fact that English words are typically separated by one or more whitespace characters. The algorithm used is as follows:
+\begin{enumerate}
+ \item Trim the input string of leading and trailing whitespace.
+ \item If there are no remaining non-whitespace characters, return an empty stream.
+ \item Split the string on a greedy whitespace regular expression (this will capture as many whitespace characters as are found between non-whitespace characters)
+ \item Return a stream of the results.
+\end{enumerate}
+
+Counting the elements in this resulting stream yields a pretty good approximation of the number of words in the input text.
+
+\subsection{Sentence detection}
+Similarly to word detection, the sentence detection code is largely contained within the \texttt{info.clarknet.counter.count.sentence} package, with the \texttt{SentenceDetector} interface defining the public behavior.
+
+The \texttt{NaiveSentenceDetector} implements my first pass at counting sentences. It has two parts to the logic it uses.
+
+\subsubsection{PunctuationTokenizer}
+The first pass at sentence detection involves running a PunctuationTokenizer over the input text. This involves first using a \texttt{WhitespaceTokenizer} to split the string into whitespace-separated tokens. Then, we map each whitespace token into one or more subtokens using several rules. Quote characters at the beginning and end of the token are separated as their own tokens, sentence-ending punctuation characters such as ".", "?", and "!" are removed from the end of the token, and any number of hyphens at the end of the token will be treated as a single token and removed from the end. Tokens that fully match a known abbreviation will be treated as a single token and not broken down any further.
+
+Hyphenated words are treated as a single token. For purposes other than simply counting words, it can be useful to confitionally split hyphenated words into multiple tokens. However, for our purposes here it is easier to keep them as one.
+
+The end result of this process is a stream of tokens that are more useful to determining where the sentence boundaries lie.
+
+\subsubsection{\texttt{NaiveSentenceDetector}}
+The \texttt{NaiveSentenceDetector} simply counts the number of sentence-ending tokens within the stream of punctuation-separated tokens generated from the \texttt{PunctuationTokenizer}.
+
+This works fairly well at identifying the number of sentences. The largest shortcoming is in handling setences that contains quoted sections within the sentence where one of these punctuation tokens appear inside the quoted section.
+
+\subsubsection{\texttt{FragmentSentenceDetector}}
+\label{sec:frag}
+My plan to tackle this challenge of nested, quoted sentence parts is to create the \texttt{FragmentSentenceDetector} implementation. Although this is not fully finished, the basic idea is to parse a stream of punctuation tokens into a stream of sentence fragments. As we are parsing the stream, a new fragment will begin whenever the previous fragment reaches a sentence ending punctuation token OR when a begin quote token is encountered. If a fragment is currently open when a new fragment is encountered, the second fragment will be added as a subfragment to the first. After parsing the whole stream, we can look at the structure of the various fragments to determine a sentence count while safely ignoring fragments that don't count as sentences because they were in nested quotes.
+
+\subsection{Paragraph detection}
+The \texttt{info.clarknet.counter.count.paragraph} package contains all the classes necessary for counting the number of paragraphs in a text sample.
+
+The \texttt{LinebreakParagraphDetector} implements this behavior in a fairly straightforward manner. The input string is first trimmed of leading and trailing whitespace, and then split on the System-defined line separator. We then iterate over the resulting string array, adding each line to a StringBuilder as we go. As soon as we encounter a blank line, we concatenate the current contents of the StringBuilder and add the result to our list of identified paragraphs. We then wipe out the StringBuilder and continue iterating, beginning to build up the StringBuilder once again as soon as we read the next non-blank line. Once we finish processing each line, we dump any remaining contents of the StringBuilder as the final paragraph in our list of paragraphs.
+
+Counting the size of this resulting list gives us the estimate for the number of paragraphs in the input string.
+
+
+\section{Areas of future growth}
+The following are areas to be developed in the future:
+\begin{itemize}
+ \item FragmentSentenceDetector: This is the next improvement I have planned (See the \nameref{sec:frag} section).
+ \item Abbreviation detector: I would like to improve this beyond just checking against a set of known abbreviations.
+ \item Large file size robustness: The library currently depends on the entire sample text being able to fit into memory as a single \texttt{String} object. I would like to implement a line-based approach that allows analyzing extremely large input files as well.
+ \item i18n and string encodings:
+\end{itemize}
+
+
+\end{document}
