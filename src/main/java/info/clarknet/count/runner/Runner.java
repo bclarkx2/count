@@ -23,8 +23,12 @@ public final class Runner {
 
     private static final String FILE_OPTION = "file";
     private static final String ANALYSIS_OPTION = "counter";
+    private static final String HELP_OPTION = "help";
     private static final AnalysisType DEFAULT_ANALYSIS_TYPE = AnalysisType.Basic;
 
+    private static final String HELP_SYNTAX = "Runner";
+    private static final String HELP_HEADER = "Count CLI";
+    private static final String HELP_FOOTER = "See github.com/bclarkx2/count";
 
     /********************
      * Fields
@@ -63,14 +67,26 @@ public final class Runner {
              final PrintWriter outWriter = new PrintWriter(this.getOutStream())) {
 
             // Parse command line to determine what needs to be done
+            final CommandLineParser parser = new DefaultParser();
+            final Options options = this.getOptions();
             final String sourceFile;
             final AnalysisType analysisType;
+            final boolean showHelp;
             try {
-                final CommandLine cmd = parseArgs(args);
+                final CommandLine cmd = parser.parse(options, args);
+                showHelp = cmd.hasOption(HELP_OPTION);
                 sourceFile = cmd.getOptionValue(FILE_OPTION);
                 analysisType = parseAnalysisType(cmd);
             } catch (ParseException e) {
                 errorWriter.println(e.getMessage());
+                return;
+            }
+
+            // Check for help request
+            if (showHelp)
+            {
+                HelpFormatter formatter = new HelpFormatter();
+                formatter.printHelp(HELP_SYNTAX, HELP_HEADER, options, HELP_FOOTER);
                 return;
             }
 
@@ -113,11 +129,17 @@ public final class Runner {
      * Private implementation
      ********************/
 
-    private CommandLine parseArgs(String[] args) throws ParseException
+    private Options getOptions()
     {
         final Options options = new Options();
+
+        options.addOption(Option.builder(HELP_OPTION)
+                .hasArg(false)
+                .optionalArg(true)
+                .desc("Show help.")
+                .build());
+
         options.addOption(Option.builder(FILE_OPTION)
-                .required(true)
                 .hasArg()
                 .desc("Input file to perform counting analysis on.")
                 .build());
@@ -129,8 +151,7 @@ public final class Runner {
                 .desc("Type of count analysis to perform on the sample.")
                 .build());
 
-        final CommandLineParser parser = new DefaultParser();
-        return parser.parse(options, args);
+        return options;
     }
 
     private AnalysisType parseAnalysisType(CommandLine cmd) throws ParseException{
