@@ -34,6 +34,9 @@ It also provides a command line utility to run this analysis on a text file (see
 \texttt{<source-file>}: Enter the path to a plain text file you want to run the \texttt{count} analysis on.
 
 
+\subsection{Testing}
+Tests can be run using \texttt{mvn verify}. This will run both the unit and integration test suites.
+
 \section{Build}
 \label{sec:build}
 \texttt{count} can be run either from a distributed tarball or by building from source.
@@ -138,8 +141,10 @@ The following are areas to be developed in the future:
 \begin{itemize}
  \item FragmentSentenceDetector: This is the next improvement I have planned (See the \nameref{sec:frag} section).
  \item Abbreviation detector: I would like to improve this beyond just checking against a set of known abbreviations.
+ \item Support for single quotes.
  \item Large file size robustness: The library currently depends on the entire sample text being able to fit into memory as a single \texttt{String} object. I would like to implement a line-based approach that allows analyzing extremely large input files as well.
- \item i18n and string encodings:
+ \item i18n and string encodings.
+ \item Investigate parallel processing (e.g. counting sentence in different paragraphs in parallel tasks).
 \end{itemize}
 
 
